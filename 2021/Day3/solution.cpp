@@ -1,7 +1,7 @@
 /*-----------------------------------------------------------------------------
  * solution.cpp
  *
- * 30 Nov 2021	Ryan Stolys
+ * ?? Dec 2021	Ryan Stolys
  *
  * ----------------------------------------------------------------------------*/
 
@@ -24,39 +24,6 @@ const string FILE_NAME = "data.txt";
 
 /***FUNCTION DEFINITIONS******************************************************/
 
-int findSum(vector<int> data, int index)
-    {
-    if (index > data.size() - 3)
-        return -1;
-    else 
-        return data.at(index) + data.at(index + 1) + data.at(index +2);
-    }
-
-int findNumberOfIncreases(vector<int> data)
-    {
-    int numberIncreases = 0;
-    int lastIndex = 0;
-    int currentIndex = 1;
-
-    while (true)
-        {
-        int current = findSum(data, currentIndex);
-        int last = findSum(data, lastIndex);
-
-        // End Condition
-        if (current == -1)
-            break;
-
-        if (current > last)
-            numberIncreases++;
-
-        lastIndex = currentIndex;
-        currentIndex++;
-        }
-
-    return numberIncreases;
-    }
-
 /**
  * @brief MAIN FUNCTION
  * 
@@ -64,13 +31,17 @@ int findNumberOfIncreases(vector<int> data)
  * @param argv array of command line arguements
  * @return int 
  */
-int main( int argc, char **argv )
+int main (int argc, char **argv)
     {
     Utils* util = new Utils();
 
-    vector<int> data = util->readFileOfInts(FILE_NAME);
+    vector<string> data = util->readFileOfStrings(FILE_NAME);
 
-    cout << findNumberOfIncreases(data) << endl;
+    // Add implementation function here
+    int result = 0;
+
+    // Report Result
+    cout << endl << "Reported Result: " << result << endl;
 
     return 0;
     }

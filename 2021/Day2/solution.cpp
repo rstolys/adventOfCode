@@ -9,11 +9,13 @@
 /***INCLUDES******************************************************************/
 #include <iostream>
 #include <vector>
-#include <fstream>
+#include "../../Utils/file.cpp"
 
 using namespace std;
 
 /***DEFINES*******************************************************************/
+const string FILE_NAME = "data.txt";
+
 const string FWD = "forward";
 const string DOWN = "down";
 const string UP = "up";
@@ -25,34 +27,6 @@ const string UP = "up";
 
 
 /***FUNCTION DEFINITIONS******************************************************/
-
-
-
-/**
- * @brief Reads the data file of integers
- * 
- * @return vector<int> 
- */
-vector<string> readFile()
-    {
-    string line;
-    vector<string> dataVector;
-    ifstream dataFile("data.txt");
-
-    if (dataFile.is_open())
-        {
-        while (getline(dataFile, line))
-        {
-            dataVector.push_back(line);
-        }
-
-        dataFile.close();
-        }
-    else 
-        cout << "Unable to open file"; 
-
-    return dataVector;
-    }
 
 int findMovement(string move, string moveType)
     {
@@ -107,17 +81,18 @@ int findPosition(vector<string> data)
     return result;
     }
 
-
-///////////////////////////////////////////////////////////////////
-/// MAIN FUNCTION
-///
-/// @param[in]  argc    number of command line arguements
-/// @param[in]  argv    array of command line arguements
-///
-///////////////////////////////////////////////////////////////////
-int main( int argc, char **argv )
+/**
+ * @brief MAIN FUNCTION
+ * 
+ * @param argc number of command line arguements
+ * @param argv array of command line arguements
+ * @return int 
+ */
+int main (int argc, char **argv)
     {
-    vector<string> data = readFile();
+    Utils* util = new Utils();
+
+    vector<string> data = util->readFileOfStrings(FILE_NAME);
 
     int result = findPosition(data);
 
