@@ -11,6 +11,7 @@
 #include <vector>
 #include <fstream>
 
+
 using namespace std;
 
 /***DEFINES*******************************************************************/
@@ -38,6 +39,14 @@ public:
      * @return vector<int> Vector where each element is line of data
      */
     vector<int> readFileOfInts(string fileName);
+
+    /**
+     * @brief Read a file where each line is an int
+     * 
+     * @param fileName The name of the file to fetch the data from
+     * @return vector<long> Vector where each element is line of data
+     */
+    vector<long> readFileOfLongs(string fileName);
     };
 
 
@@ -74,6 +83,27 @@ vector<int> Utils::readFileOfInts(string fileName)
             while (getline(dataFile, line))
             {
                 intVector.push_back(stoi(line));
+            }
+
+            dataFile.close();
+            }
+        else 
+            cout << "Unable to open file"; 
+
+    return intVector;
+    }
+
+vector<long> Utils::readFileOfLongs(string fileName)
+    {
+    string line;
+        vector<long> intVector;
+        ifstream dataFile(fileName);
+
+        if (dataFile.is_open())
+            {
+            while (getline(dataFile, line))
+            {
+                intVector.push_back(stol(line));
             }
 
             dataFile.close();

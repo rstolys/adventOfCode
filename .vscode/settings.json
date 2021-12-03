@@ -3,6 +3,13 @@
         "vector": "cpp",
         "string": "cpp",
         "filesystem": "cpp",
-        "iosfwd": "cpp"
+        "iosfwd": "cpp",
+        "iostream": "cpp",
+        "ostream": "cpp",
+        "bitset": "cpp",
+        "array": "cpp",
+        "iterator": "cpp",
+        "string_view": "cpp",
+        "ratio": "cpp"
     }
 }
