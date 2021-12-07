@@ -10,6 +10,9 @@
         "array": "cpp",
         "iterator": "cpp",
         "string_view": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "__hash_table": "cpp",
+        "deque": "cpp",
+        "unordered_map": "cpp"
     }
 }
