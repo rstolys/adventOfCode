@@ -27,39 +27,12 @@ const int CHAR_TO_INT = 48;
 
 
 /***FUNCTION DEFINITIONS******************************************************/
-
 class Lanternfish
-    {
-public:
-    int birthDay;
-
-    Lanternfish(int birthDay)
-        {
-        this->birthDay = birthDay;
-        }
-
-    long CountFishCreated()
-        {
-        long fishMadeDirectly = (birthDay / 7) + 1;
-        long fishMadeInTotal = fishMadeDirectly;
-
-        // Assume fish one is made 7 days after birthday 
-        for (int i = 1; i < fishMadeDirectly; i++)
-            {
-            Lanternfish* newFish = new Lanternfish(birthDay - 7*i);
-            fishMadeInTotal += newFish->CountFishCreated();
-            }
-
-        return fishMadeInTotal;
-        }
-    };
-
-class Lanternfish_Part1
     {
 public:
     int counter;
 
-    Lanternfish_Part1(int initialValue)
+    Lanternfish(int initialValue)
         {
         counter = initialValue;
         }
@@ -69,9 +42,9 @@ public:
         counter--;
         }
 
-    Lanternfish_Part1 MakeNewFish()
+    Lanternfish MakeNewFish()
         {
-        Lanternfish_Part1* newFish = new Lanternfish_Part1(DAYS_UNTIL_FIRST_BABY);
+        Lanternfish* newFish = new Lanternfish(DAYS_UNTIL_FIRST_BABY);
         counter = DAYS_UNTIL_BABY;
 
         return *(newFish);
@@ -91,50 +64,53 @@ vector<int> GetFishAges(string inputs)
     return ages;
     }
 
-vector<Lanternfish_Part1> ConvertToFishes(vector<int> ages)
+vector<Lanternfish> ConvertToFishes(vector<int> ages)
     {
-    vector<Lanternfish_Part1> fishes;
+    vector<Lanternfish> fishes;
     for (int i = 0; i < ages.size(); i++)
         {
-        fishes.push_back(*(new Lanternfish_Part1(ages[i])));
+        fishes.push_back(*(new Lanternfish(ages[i])));
         }
 
     return fishes;
     }
 
-vector<Lanternfish_Part1> GetAges(vector<Lanternfish_Part1> fishes, int desiredAge)
+int GetNumAtCounter(vector<Lanternfish> fishes, int currentCounter)
     {
-    vector<Lanternfish_Part1> desiredFishes;
+    int numFish = 0;
     for (int i = 0; i < fishes.size(); i++)
         {
-        if (fishes[i].counter == desiredAge)
-            desiredFishes.push_back(fishes[i]);
+        if (fishes[i].counter == currentCounter)
+            numFish++;
         }
 
-    return desiredFishes;
+    return numFish;
     }
 
-long SimulateLife(vector<Lanternfish_Part1> fishes, int days)
+long SimulateLife(vector<long> fishPerDay, int days)
     {
     for (int i = 0; i < days; i++)
         {
-        cout << "Day " << i << " -- Num fish: " << fishes.size() << endl;
-        vector<Lanternfish_Part1> newFish;
-        for (int f = 0; f < fishes.size(); f++)
-            {
-            if (fishes[f].counter == 0)
-                newFish.push_back(fishes[f].MakeNewFish());
-            else 
-                fishes[f].DecreaseCounter();
-            }
+        long babyMakingFish = fishPerDay[0];
 
-        for (int nfish = 0; nfish < newFish.size(); nfish++)
-            {
-            fishes.push_back(newFish[nfish]);
-            }
+        fishPerDay[0] = fishPerDay[1];
+        fishPerDay[1] = fishPerDay[2];
+        fishPerDay[2] = fishPerDay[3];
+        fishPerDay[3] = fishPerDay[4];
+        fishPerDay[4] = fishPerDay[5];
+        fishPerDay[5] = fishPerDay[6];
+        fishPerDay[6] = fishPerDay[7] + babyMakingFish;
+        fishPerDay[7] = fishPerDay[8];
+        fishPerDay[8] = babyMakingFish;
         }
 
-    return fishes.size();
+    long totalFish = 0;
+    for (int i = 0; i < 9; i++)
+        {
+        totalFish += fishPerDay[i];
+        }
+
+    return totalFish;
     }
 
 /**
@@ -153,19 +129,23 @@ int main (int argc, char **argv)
     vector<int> ages = GetFishAges(data[0]);
 
     // Convert to array of lanternfish
-    vector<Lanternfish_Part1> fishes = ConvertToFishes(ages);
+    vector<Lanternfish> fishes = ConvertToFishes(ages);
+
+    cout << "Num Fish " << fishes.size() << endl; 
+
+    vector<long> fishPerDay;
+    fishPerDay.push_back(GetNumAtCounter(fishes, 0)); // Should be 0
+    fishPerDay.push_back(GetNumAtCounter(fishes, 1));
+    fishPerDay.push_back(GetNumAtCounter(fishes, 2));
+    fishPerDay.push_back(GetNumAtCounter(fishes, 3));
+    fishPerDay.push_back(GetNumAtCounter(fishes, 4));
+    fishPerDay.push_back(GetNumAtCounter(fishes, 5));
+    fishPerDay.push_back(GetNumAtCounter(fishes, 6)); 
+    fishPerDay.push_back(GetNumAtCounter(fishes, 7)); // Shuold be 0
+    fishPerDay.push_back(GetNumAtCounter(fishes, 8)); // Should be 0
+
+    long result = SimulateLife(fishPerDay, 256);
     
-    // Add implementation function here
-    Lanternfish_Part1* myFish = new Lanternfish_Part1(6);
-    vector<Lanternfish_Part1> singleFish;
-    singleFish.push_back(*myFish);
-    int result = SimulateLife(singleFish, 80);
-
-    //Lanternfish* day1Fish = new Lanternfish(254);
-    //long fishMade = day1Fish->CountFishCreated();
-
-    //cout << "Fish with starting age of 1 made: " << fishMade << " fish" << endl;
-
     // Report Result
     cout << endl << "Reported Result: " << result << endl;
 
