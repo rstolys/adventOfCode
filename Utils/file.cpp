@@ -38,7 +38,7 @@ public:
      * @param fileName The name of the file to fetch the data from
      * @return vector<int> Vector where each element is line of data
      */
-    vector<int> readFileOfInts(string fileName);
+    vector<int> convertCsvToInt(string data);
 
     /**
      * @brief Read a file where each line is an int
@@ -72,25 +72,28 @@ vector<string> Utils::readFileOfStrings(string fileName)
     return dataVector;
     }
 
-vector<int> Utils::readFileOfInts(string fileName)
+// May not work
+vector<int> Utils::convertCsvToInt(string dataline)
     {
-    string line;
-        vector<int> intVector;
-        ifstream dataFile(fileName);
+    vector<int> data;
 
-        if (dataFile.is_open())
-            {
-            while (getline(dataFile, line))
-            {
-                intVector.push_back(stoi(line));
-            }
+    while (dataline.length())
+        {
+        size_t delimiterPos = dataline.find(',');
+        int delimiterLength = 1;
 
-            dataFile.close();
-            }
-        else 
-            cout << "Unable to open file"; 
+        string value = dataline.substr(0, delimiterPos);
 
-    return intVector;
+        // remove comma
+        dataline.erase(0, delimiterPos + delimiterLength);
+
+        data.push_back(stoi(value));
+
+        if (delimiterPos == string::npos)
+            break;
+        }
+    
+    return data;
     }
 
 vector<long> Utils::readFileOfLongs(string fileName)
