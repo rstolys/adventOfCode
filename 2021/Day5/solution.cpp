@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include "../../Utils/file.cpp"
+#include "../../Utils/utils.cpp"
 
 using namespace std;
 
@@ -175,7 +175,7 @@ int main (int argc, char **argv)
     Utils* util = new Utils();
 
     // Each string is a pair of points
-    vector<string> data = util->readFileOfStrings(FILE_NAME);
+    vector<string> data = util->readFile(FILE_NAME);
 
     vector<Line> lines;
     for (int i = 0; i < data.size(); i++)

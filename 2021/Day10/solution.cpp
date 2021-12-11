@@ -12,7 +12,7 @@
 #include <algorithm>    // std::sort
 
 #include <fstream>
-#include "../../Utils/file.cpp"
+#include "../../Utils/utils.cpp"
 
 using namespace std;
 
@@ -186,7 +186,7 @@ int main (int argc, char **argv)
     {
     Utils* util = new Utils();
 
-    vector<string> data = util->readFileOfStrings(FILE_NAME);
+    vector<string> data = util->readFile(FILE_NAME);
 
     vector<Chunk> chunks;
     for (int i = 0; i < data.size(); i++)

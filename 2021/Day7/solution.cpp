@@ -10,7 +10,7 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
-#include "../../Utils/file.cpp"
+#include "../../Utils/utils.cpp"
 
 using namespace std;
 
@@ -120,7 +120,7 @@ int main (int argc, char **argv)
     {
     Utils* util = new Utils();
 
-    vector<string> data = util->readFileOfStrings(FILE_NAME);
+    vector<string> data = util->readFile(FILE_NAME);
     vector<Submarine> subs = GetSubs(data[0]);
 
     // Add implementation function here

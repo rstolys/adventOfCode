@@ -9,7 +9,7 @@
 /***INCLUDES******************************************************************/
 #include <iostream>
 #include <vector>
-#include "../../Utils/file.cpp"
+#include "../../Utils/utils.cpp"
 
 using namespace std;
 
@@ -68,7 +68,8 @@ int main( int argc, char **argv )
     {
     Utils* util = new Utils();
 
-    vector<int> data = util->readFileOfInts(FILE_NAME);
+    vector<string> dataStrings = util->readFile(FILE_NAME);
+    vector<int> data = util->convertStringsToInts(dataStrings);
 
     cout << findNumberOfIncreases(data) << endl;
 

@@ -9,7 +9,8 @@
 /***INCLUDES******************************************************************/
 #include <iostream>
 #include <vector>
-#include "../../Utils/file.cpp"
+#include "../../Utils/utils.cpp"
+#include "../../Utils/binary.cpp"
 
 using namespace std;
 
@@ -25,69 +26,17 @@ const string FILE_NAME = "data.txt";
 
 /***FUNCTION DEFINITIONS******************************************************/
 
-uint16_t convertSingleValue(string data)
-    {
-    uint16_t value = 0x0000;
-
-    for (int b = 11, pos = 0; b >= 0; b--, pos++)
-        {
-        if (data[b] == '1')
-            value |= 0x1 << pos; 
-        }
-
-    return value;
-    }
-
-vector<uint16_t> convertToBinaryValues(vector<string> data)
-    {
-    vector<uint16_t> convertedData;
-
-    for (int i = 0; i < data.size(); i++)
-        {
-        string value = data[i];
-        uint16_t binaryValue = convertSingleValue(value);
-        convertedData.push_back(binaryValue);
-        }
-
-    return convertedData;
-    }
-
-int determineMostCommonBit(vector<uint16_t> data, long bitPos)
-    {
-    int numOnes = 0;
-    int numZeros = 0;
-
-    for (int i = 0; i < data.size(); i++)
-        {
-        int bitValue = (data[i] >> bitPos) & 0x1;
-
-        if (bitValue)
-            numOnes++;
-        else
-            numZeros++;
-        }
-
-    return numOnes >= numZeros;
-    }
-
-int invertBits(int input)
-    {
-    for (int i = 0; i < 12; i++)
-       input ^= (1 << i);
-
-    return input;
-    }
-
 int findRates(vector<uint16_t> data)
     {
+    Binary* binary = new Binary();
     int gamma = 0; // most common bit in each position
 
     for (int bit = 0; bit < 12; bit++)
         {
-        gamma |= determineMostCommonBit(data, bit) << bit;
+        gamma |= binary->determineMostCommonBitInGridColumn(data, bit) << bit;
         }
 
-    int epsilon = invertBits(gamma);
+    int epsilon = binary->invertBits(gamma);
     int result = (gamma * epsilon);
     cout << "Gamma: " << gamma << endl;
     cout << "Epsilon: " << epsilon << endl;
@@ -98,10 +47,11 @@ int findRates(vector<uint16_t> data)
 
 int findO2Rating(vector<uint16_t> data)
     {
+    Binary* binary = new Binary();
     uint16_t o2Rating = 0x0000;
     for (int bitPos = 11; bitPos >= 0; bitPos--)
         {
-        int bit = determineMostCommonBit(data, bitPos);
+        int bit = binary->determineMostCommonBitInGridColumn(data, bitPos);
 
         //cout << "Most common bit: " << bit << endl;
 
@@ -129,11 +79,12 @@ int findO2Rating(vector<uint16_t> data)
 
 int findCO2Rating(vector<uint16_t> data)
     {
+    Binary* binary = new Binary();
     uint16_t co2Rating = 0x0000;
     for (int bitPos = 11; bitPos >= 0; bitPos--)
         {
         // We actually want the least common bit
-        int bit = !determineMostCommonBit(data, bitPos);
+        int bit = !binary->determineMostCommonBitInGridColumn(data, bitPos);
 
         //cout << "Least common bit: " << bit << endl;
 
@@ -176,9 +127,10 @@ int findCO2Rating(vector<uint16_t> data)
 int main (int argc, char **argv)
     {
     Utils* util = new Utils();
+    Binary* binary = new Binary();
 
-    vector<string> dataStrings = util->readFileOfStrings(FILE_NAME);
-    vector<uint16_t> data = convertToBinaryValues(dataStrings);
+    vector<string> dataStrings = util->readFile(FILE_NAME);
+    vector<uint16_t> data = binary->convertToBinaryValues(dataStrings);
     
     //int result = findRates(data);
     int oxygenRating = findO2Rating(data);
