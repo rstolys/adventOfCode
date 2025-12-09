@@ -8,6 +8,7 @@
 class Box
     {
     distances = {};
+    orderedDistances = [];
 
     connectedTo = [];
 
@@ -30,25 +31,26 @@ class Box
         this.distances[otherBox.id] = { box: otherBox, distance: Math.sqrt(val1) };
         }
 
+    getOrderedDistances()
+        {
+        if (this.orderedDistances.length > 0)
+            return this.orderedDistances;
+
+        this.orderedDistances = Object.entries(this.distances).sort((a,b) => a[1].distance - b[1].distance);
+        return this.orderedDistances;
+        }
+
     getNextClosestBoxDistance()
         {
-        let minDistance = Infinity;
-        let closestBoxId = null;
-
-        for (let [boxId, info] of Object.entries(this.distances))
+        let orderedDistances = this.getOrderedDistances();
+        for (let i = 0; i < orderedDistances.length; i++)
             {
             // If these boxes are already connected, skip
-            if (this.connectedTo.includes(boxId))
+            if (this.connectedTo.includes(orderedDistances[i][0]))
                 continue;
 
-            if (info.distance < minDistance)
-                {
-                minDistance = info.distance;
-                closestBoxId = boxId;
-                }
+            return { boxId: this.id, closestTo: orderedDistances[i][0], distance: orderedDistances[i][1].distance };
             }
-
-        return { boxId: this.id, closestTo: closestBoxId, distance: minDistance };
         }
     }
 
@@ -67,9 +69,13 @@ function solution(data)
                 boxArray[i].computeDistanceTo(boxArray[j]);
 
     // Connect the n closest boxes
-    let n = 10;
+    let maxChecks = 100000;
     let availableClosestConnections = [];
-    for (let i = 0; i < n; i++)
+    let lastConnectionA = null;
+    let lastConnectionB = null;
+    let n = 0;
+    let minN = 10;
+    while (true && maxChecks-- > 0)
         {
         for (let j = 0; j < boxArray.length; j++)
             availableClosestConnections.push(boxArray[j].getNextClosestBoxDistance());
@@ -80,11 +86,46 @@ function solution(data)
         // Connect the closest boxes
         let closestConnection = availableClosestConnections.shift();
         boxes[closestConnection.boxId].connectedTo.push(closestConnection.closestTo);
+        boxes[closestConnection.closestTo].connectedTo.push(closestConnection.boxId);
 
         // Clear the available connections for the next iteration
         availableClosestConnections = [];
+
+        // We know it will take at least 1000 connectionns before all boxes are connected
+        // Check after a certain number of connections
+        if (n > minN)
+            {
+            if (findLongestChain(boxArray, boxes) === boxArray.length)
+                {
+                lastConnectionA = new Box(closestConnection.boxId);
+                lastConnectionB = new Box(closestConnection.closestTo);
+                break;
+                }
+            }
+
+        n++;
         }
 
+    return lastConnectionA.x * lastConnectionB.x;
+
+    // PART 1
+    // // Traverse the connections to find all of the chain lengths 
+    // let chainLengths = [];
+    // let visitedNodes = {};
+    // for (let i = 0; i < boxArray.length; i++)
+    //     {
+    //     if (visitedNodes[boxArray[i].id])
+    //         continue;
+
+    //     chainLengths.push(buildChain(visitedNodes, boxArray[i], boxes));
+    //     }
+
+    // chainLengths = chainLengths.sort((a,b) => b - a);
+    // return chainLengths[0] * chainLengths[1] * chainLengths[2];
+    }
+
+function findLongestChain(boxArray, boxes)
+    {
     // Traverse the connections to find all of the chain lengths 
     let chainLengths = [];
     let visitedNodes = {};
@@ -97,7 +138,7 @@ function solution(data)
         }
 
     chainLengths = chainLengths.sort((a,b) => b - a);
-    return chainLengths[0] * chainLengths[1] * chainLengths[2];
+    return chainLengths[0];
     }
 
 function buildChain(visitedNodes, currentBox, allBoxes)
