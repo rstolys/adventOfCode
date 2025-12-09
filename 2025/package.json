@@ -1,0 +1,14 @@
+{
+  "name": "2021",
+  "version": "1.0.0",
+  "description": "Advent Of Code",
+  "main": "main.js",
+  "scripts": {
+    "test": "node main.js"
+  },
+  "author": "Ryan Stolys",
+  "license": "ISC",
+  "dependencies": {
+    "xmlhttprequest": "^1.8.0"
+  }
+}
