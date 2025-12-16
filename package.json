@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "na-gaussian-elimination": "^1.0.0"
+  }
+}
