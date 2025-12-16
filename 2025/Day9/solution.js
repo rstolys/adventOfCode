@@ -17,45 +17,57 @@ class Tile
 
 class Grid
     {
-    grid = [[]];
-    constructor(largestX, largestY)
+    constructor()
         {
-        for (let i = 0; i <= largestY; i++)
-            {
-            this.grid[i] = [];
-            for (let j = 0; j <= largestX; j++)
-                this.grid[i][j] = new Tile(`${j},${i}`, "white");
-            }
+        this.grid = {};
         }
 
     setTiles(tile, previousTile)
         {
-        // Make allt tiles between the two, green
+        // Make all tiles between the two, green
         // We know they will share either an x or y coordinate
+        // While doing this, we will also set the tiles outside of the box to be an error colour for our solution
         if (tile.x == previousTile.x)
             {
             for (let i = Math.min(tile.y, previousTile.y); i <= Math.max(tile.y, previousTile.y); i++)
-                this.grid[tile.y][i] = new Tile(`${tile.x},${i}`, "green");
+                this.grid[tile.x][i] = "green";
             }
-        else 
+        else // They have the same y value
             {
             for (let i = Math.min(tile.x, previousTile.x); i <= Math.max(tile.x, previousTile.x); i++)
-                this.grid[tile.y][i] = new Tile(`${i},${tile.y}`, "green");
+                this.grid[i][tile.y] = "green";
             }
 
         // Ensure we didn't overwrite the red tiles
-        this.grid[tile.y][tile.x] = tile;
-        this.grid[previousTile.y][previousTile.x] = previousTile;
+        this.grid[tile.x][tile.y] = "red";
+        this.grid[previousTile.x][previousTile.y] = "red";
         }
 
-    areTilesBetweenGreenOrRed(tile1, tile2)
+    createBoxBoundary(startingTile)
         {
-        let areAllGreenOrRed = true;
+        
+        }
 
-        // Check in the 
+    // If this is a valid box, then when tracing the outsides of the box, we will never cross red/green tile line
+    // To keep track of this we should mark that we are currently on the edge of the box
+    // If we touch move inside the box, then we mark that we are inside, if we find we are outside, then we know this is invalid
+    isValidBox(tile1, tile2)
+        {
+        let isValid = true;
+
+        let onEdge = true;
+        let onInside = false;
+
+        // Start by going down the left side 
+        for (let i = Math.min(tile1.x, tile2.x); i <= Math.max(tile1.x, tile2.x); i++)
+            {
+            if (this.grid[i][Math.min(tile1.y, tile2.y)].color == "white")
+            }
+            isValid
+
         for (let i = Math.min(tile1.x, tile2.x); i <= Math.max(tile1.x, tile2.x); i++)
             for (let j = Math.min(tile1.y, tile2.y); j <= Math.max(tile1.y, tile2.y); j++)
-                areAllGreenOrRed = areAllGreenOrRed && (this.grid[j][i].color == "green" || this.grid[j][i].color == "red");
+                areAllGreenOrRed = areAllGreenOrRed && (this.grid[i][j].color == "green" || this.grid[i][j].color == "red");
 
         return areAllGreenOrRed;
         }
@@ -64,36 +76,31 @@ class Grid
 function solution(data)
     {
     let redTiles = [];
-    let smallestX = Infinity;
-    let smallestY = Infinity;
-    let largestX = -Infinity;
-    let largestY = -Infinity;
     for (let line of data)
-        {
-        let tile = new Tile(line, "red");
-        if (tile.x < smallestX) smallestX = tile.x;
-        if (tile.y < smallestY) smallestY = tile.y;
-        if (tile.x > largestX) largestX = tile.x;
-        if (tile.y > largestY) largestY = tile.y;
-        redTiles.push(tile);
-        }
+        redTiles.push(new Tile(line, "red"));
 
     // Build a grid with red and green tiles
     let grid = new Grid(largestX, largestY);
     for (let i = 0; i < redTiles.length; i++)
         grid.setTiles(redTiles[i], i == 0 ? redTiles[redTiles.length - 1] : redTiles[i - 1]);
-        
+
+    grid.fillInsideOfRedAndGreenTiles();
 
     let maxArea = 0;
     for (let i = 0; i < redTiles.length; i++)
         {
         for (let j = 0; j < redTiles.length; j++)
             {
+            let area = Math.abs((redTiles[i].x - redTiles[j].x + 1) * (redTiles[i].y - redTiles[j].y + 1));
             if (grid.areTilesBetweenGreenOrRed(redTiles[i], redTiles[j]))
                 {
-                let area = Math.abs((redTiles[i].x - redTiles[j].x + 1) * (redTiles[i].y - redTiles[j].y + 1));
+                //let area = Math.abs((redTiles[i].x - redTiles[j].x + 1) * (redTiles[i].y - redTiles[j].y + 1));
                 if (area > maxArea)
                     maxArea = area;
+                }
+            else 
+                {
+                console.log(area);
                 }
             }
         }
