@@ -11,10 +11,13 @@ function solution(data)
     let duplicatedItems = [];
     for (let i = 0; i < items.length; i++)
         {
-        let range = items[i].split('-');
+        let range = items[i].split('-').map(Number);
         for (let j = range[0]; j <= range[1]; j++)
             {
-            if (hasDuplicate(j))
+            // if (hasDuplicatePart1(j))
+            //     duplicatedItems.push(j);
+        
+            if (hasDuplicatePart2(j))
                 duplicatedItems.push(j);
             }
         }
@@ -34,7 +37,37 @@ function sumValues(arr)
     return sum;
     }
 
-function hasDuplicate(number)
+function hasDuplicatePart2(number)
+    {
+    let numStr = number.toString();
+    let isDuplicate = false;
+
+    // We need to check for duplicates of any length (e.g. 123123123 is now considered a duplicate)
+    for (let len = 1; len <= Math.floor(numStr.length / 2); len++)
+        {
+        if (numStr.length % len != 0)
+            continue;
+
+        isDuplicate = true;
+        let comparePart = numStr.substring(0, len);
+        for (let p = 1; p * len < numStr.length; p++)
+            {
+            let testPart = numStr.substring(p*len, p*len + len);
+            if (testPart != comparePart)
+                {
+                isDuplicate = false;
+                break;
+                }
+            }
+
+        if (isDuplicate)
+            break;
+        }
+
+    return isDuplicate;
+    }
+
+function hasDuplicatePart1(number)
     {
     let numStr = number.toString();
     if (numStr.length % 2 == 1)
