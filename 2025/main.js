@@ -1,5 +1,5 @@
 // Set the current day
-const currentDay = "Day5";
+const currentDay = "Day6";
 
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var s = require("./" + currentDay + "/solution");
